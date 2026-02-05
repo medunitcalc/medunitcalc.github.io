@@ -142,18 +142,60 @@ button{
 </div>
 <a href="mean-arterial-pressure.html">Mean Arterial Pressure (MAP)</a>
 
+
 <!-- PaO2 / FiO2 -->
 <div class="card" data-key="pafi respiratory icu">
-<span class="tag">Respiratory</span>
-<h3>PaO₂ / FiO₂</h3>
-<label>PaO₂</label><input id="pa">
-<label>FiO₂ (%)</label><input id="fio">
-<button onclick="calcPF()">Calculate</button>
-<div class="result" id="rPF"></div>
-<div class="small">Normal > 300</div>
-<div class="warn" id="wPF"></div>
-<button class="copy" onclick="copyText('rPF')">Copy</button>
+  <span class="tag">Respiratory</span>
+  <h3>PaO₂ / FiO₂</h3>
+  <label>PaO₂</label><input id="pa">
+  <label>FiO₂ (%)</label><input id="fio">
+  <button onclick="calcPF()">Calculate</button>
+  <div class="result" id="rPF"></div>
+  <div class="small">Normal > 300</div>
+  <div class="warn" id="wPF"></div>
+  <button class="copy" onclick="copyText('rPF')">Copy</button>
 </div>
+
+<script>
+function calcPF() {
+  let pa = parseFloat(document.getElementById('pa').value);
+  let fio = parseFloat(document.getElementById('fio').value);
+  let rPF = document.getElementById('rPF');
+  let wPF = document.getElementById('wPF');
+
+  if(isNaN(pa) || isNaN(fio) || fio <= 0){
+    rPF.innerText = "";
+    wPF.innerText = "Enter valid PaO₂ and FiO₂";
+    return;
+  }
+
+  // قسم FiO2 على 100 فقط كما طلبت
+  let ratio = pa / (fio / 100);
+  rPF.innerText = "P/F Ratio = " + ratio.toFixed(2);
+
+  // التحذير يبقى كما هو (يمكن تعديل لاحقًا إذا أحببت)
+  if(ratio > 300){
+    wPF.innerText = "Normal";
+    wPF.style.color = "green";
+  } else if(ratio > 200){
+    wPF.innerText = "Mild Hypoxemia";
+    wPF.style.color = "orange";
+  } else if(ratio > 100){
+    wPF.innerText = "Moderate Hypoxemia";
+    wPF.style.color = "red";
+  } else {
+    wPF.innerText = "Severe Hypoxemia";
+    wPF.style.color = "darkred";
+  }
+}
+
+function copyText(id){
+  let text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text);
+  alert("Copied: " + text);
+}
+</script>
+<a href="pao2-fio2.html">PaO₂ / FiO₂ (P/F Ratio)</a>
 
 <!-- GCS -->
 <div class="card" data-key="gcs coma emergency">
@@ -526,6 +568,7 @@ function conv(){
 </body>
 
 </html>
+
 
 
 
